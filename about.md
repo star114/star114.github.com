@@ -12,7 +12,7 @@ Heesik Shin
 ### Where do you live ?
 Seoul, Korea  
 
-### Academic ability
+### Education
 Seoul National University (2008 - )  
 
 ### Majon in
