@@ -117,12 +117,11 @@
         <p>&copy; Copyrights in {{ site.time | date: '%Y' }} {{ site.author.name }} 
         </p>
         <p>
+           <!--
            <a href="{{ BASE_PATH }}/index.html">Main Pages</a>
-           | <a href="{{ BASE_PATH }}/about.html">About</a>
-           | <a href="{{ BASE_PATH }}/archive.html">Archive</a>
-           | <a href="{{ BASE_PATH }}/categories.html">Categories</a>
-           | <a href="{{ BASE_PATH }}/pages.html">SiteMap</a>
-           | <a href="{{ BASE_PATH }}/tags.html">Tags</a>
+           | <a href="{{ BASE_PATH }}/pages.html">Repositories</a>
+           | <a href="{{ BASE_PATH }}/archive.html">Posts</a>
+           -->
          </p>
       </div>
     </footer>
@@ -130,6 +129,48 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="{{ ASSET_PATH }}/js/jquery.min.js"><\/script>')</script>
     <script src="{{ ASSET_PATH }}/bootstrap/js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript">
+     
+        jQuery.githubUser = function(username, callback) {
+            jQuery.getJSON('https://api.github.com/users/'+username+'/repos?callback=?',callback);
+        };
+     
+
+        jQuery.fn.extend({
+          loadRepositories : function(username) {
+            this.html("<span>Querying GitHub for " + username +"'s repositories...</span>");
+         
+            var target = this;
+            $.githubUser(username, function(data) {
+                var repos = data.data; // JSON Parsing
+                sortByName(repos);    
+             
+                var list = $('<dl/>');
+                target.empty().append(list);
+                $(repos).each(function() {
+                    if (this.name != (username.toLowerCase()+'.github.com')) {
+                        list.append('<dt><a href="'+ (this.homepage?this.homepage:this.html_url) +'">' + this.name + '</a> <em>'+(this.language?('('+this.language+')'):'')+'</em></dt>');
+                        list.append('<dd>' + this.description +'</dd>');
+                    }
+                });      
+              });
+              
+            function sortByName(repos) {
+                repos.sort(function(a,b) {
+                return a.name - b.name;
+               });
+            };
+          }
+        });
+        
+
+        $(function() {
+            //console.log("hello!");
+
+            $("#my-github-projects").loadRepositories("star114");
+        });
+    </script>
 
     {% include JB/analytics %}
   </body>
